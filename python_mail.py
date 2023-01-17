@@ -4,6 +4,7 @@
 python发送邮件
 """
 
+
 import smtplib
 from email.header import Header
 from email.mime.text import MIMEText
@@ -64,7 +65,7 @@ message["Subject"] = Header("邮件标题", "utf-8")
 try:
     # 登录，并发送邮件
     smtpObj = smtplib.SMTP_SSL(mail_host, mail_port)
-    smtpObj.login(mail_user, mail_pass)
+    smtpObj.login(mail_sender, mail_pass)
     smtpObj.sendmail(mail_sender, mail_receivers, message.as_string())
     print("success")
 except smtplib.SMTPException as excep:

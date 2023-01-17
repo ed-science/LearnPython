@@ -27,7 +27,7 @@ def init(self, name):
 
 
 def hello(self):
-    print("hello %s" % self.name)
+    print(f"hello {self.name}")
     return
 
 Foo = type("Foo", (object,), {"__init__": init, "hello": hello, "cls_var": 10})
@@ -42,10 +42,10 @@ print(type.__class__)
 
 
 class Author(type):
-    def __new__(mcs, name, bases, dict):
+    def __new__(cls, name, bases, dict):
         # 添加作者属性
         dict["author"] = "xianhu"
-        return super(Author, mcs).__new__(mcs, name, bases, dict)
+        return super(Author, cls).__new__(cls, name, bases, dict)
 
 
 class Foo(object, metaclass=Author):

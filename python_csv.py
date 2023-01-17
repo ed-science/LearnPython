@@ -4,6 +4,7 @@
 python_csv.py by xianhu
 """
 
+
 import csv
 import datetime
 
@@ -44,7 +45,7 @@ with open("test.csv", "r") as file:
 # 读文件
 with open("test.csv", "r") as file:
     reader = csv.DictReader(file, fieldnames=["id", "name", "float", "datetime"], dialect="excel")
-    data = [item for item in reader]
+    data = list(reader)
     print(data)
 
 # 写文件

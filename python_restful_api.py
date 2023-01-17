@@ -84,7 +84,7 @@ class Todo(Resource):
         更新用户数据: curl http://127.0.0.1:5000/users/1 -X PUT -d "name=Allen&age=20" -H "Authorization: token fejiasdfhu"
         """
         args = parser_put.parse_args()
-        user_ids_set = set([user.id for user in session.query(User.id)])
+        user_ids_set = {user.id for user in session.query(User.id)}
         print(user_ids_set)
 
         # 用户不存在，返回404
@@ -108,11 +108,7 @@ class Todo(Resource):
         users = session.query(User).filter(User.id == user_id)
 
         # 用户不存在，返回404
-        if users.count() == 0:
-            return None, 404
-
-        # 返回用户数据
-        return get_json(users[0]), 200
+        return (None, 404) if users.count() == 0 else (get_json(users[0]), 200)
 
     def delete(self, user_id):
         """

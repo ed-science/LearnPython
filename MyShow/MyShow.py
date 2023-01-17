@@ -46,17 +46,16 @@ def index():
             session["username"] = user_form.name.data
         else:
             flash(user_form.errors["name"][0] if "name" in user_form.errors else user_form.errors["password"][0])
-    else:
-        if request.args.get("action") == "login_out":
-            flash("您已成功退出系统！")
-            session["username"] = None
-            return redirect(url_for("index"))
-        elif request.args.get("action") == "overview":
-            session["page_type"] = "overview"
-            return redirect(url_for("index"))
-        elif request.args.get("action") == "zhihu_topics":
-            session["page_type"] = "zhihu_topics"
-            return redirect(url_for("index"))
+    elif request.args.get("action") == "login_out":
+        flash("您已成功退出系统！")
+        session["username"] = None
+        return redirect(url_for("index"))
+    elif request.args.get("action") == "overview":
+        session["page_type"] = "overview"
+        return redirect(url_for("index"))
+    elif request.args.get("action") == "zhihu_topics":
+        session["page_type"] = "zhihu_topics"
+        return redirect(url_for("index"))
     return render_template("index.html", name=session.get("username"), page_type=session.get("page_type", "overview"), form=user_form)
 
 

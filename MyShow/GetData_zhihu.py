@@ -21,8 +21,8 @@ def get_topic_data(topic_id, topic_name):
         "links": []
     }
 
-    nodes_set = set([topic_id])
-    dai_ids = set([topic_id])
+    nodes_set = {topic_id}
+    dai_ids = {topic_id}
     while dai_ids:
         cursor.execute("select * from t_zhihutopics where t_topic_parentid = %s;", [dai_ids.pop()])
         for item in cursor.fetchall():

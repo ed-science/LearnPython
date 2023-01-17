@@ -75,7 +75,7 @@ def scatter_plot():
     plt.ion()
 
     # 循环
-    for index in range(50):
+    for _ in range(50):
         # 清除原有图像
         # plt.cla()
 
@@ -118,7 +118,7 @@ def three_dimension_scatter():
     plt.ion()
 
     # 循环
-    for index in range(50):
+    for _ in range(50):
         # 清除原有图像
         fig.clf()
 

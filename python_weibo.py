@@ -93,7 +93,9 @@ class WeiBoLogin(object):
                 "_": int(time.time()*1000),
             }
             response = self.session.get("https://passport.weibo.com/wbsso/login", params=params)
-            json_data_2 = json.loads(re.search(r"\((?P<result>.*)\)", response.text).group("result"))
+            json_data_2 = json.loads(
+                re.search(r"\((?P<result>.*)\)", response.text)["result"]
+            )
             if json_data_2["result"] is True:
                 self.user_uniqueid = json_data_2["userinfo"]["uniqueid"]
                 self.user_nick = json_data_2["userinfo"]["displayname"]
@@ -102,7 +104,7 @@ class WeiBoLogin(object):
                 logging.warning("WeiBoLogin failed: %s", json_data_2)
         else:
             logging.warning("WeiBoLogin failed: %s", json_data_1)
-        return True if self.user_uniqueid and self.user_nick else False
+        return bool(self.user_uniqueid and self.user_nick)
 
     def get_username(self):
         """
@@ -127,7 +129,7 @@ class WeiBoLogin(object):
         }
         try:
             response = self.session.get("http://login.sina.com.cn/sso/prelogin.php", params=params)
-            json_data = json.loads(re.search(r"\((?P<data>.*)\)", response.text).group("data"))
+            json_data = json.loads(re.search(r"\((?P<data>.*)\)", response.text)["data"])
         except Exception as excep:
             json_data = {}
             logging.error("WeiBoLogin get_json_data error: %s", excep)
