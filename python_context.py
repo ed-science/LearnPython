@@ -42,13 +42,11 @@ with MyOpen("python_base.py") as file_in:
 def open_func(file_name):
     # __enter__方法
     print("open file:", file_name, "in __enter__")
-    file_handler = open(file_name, "r")
+    with open(file_name, "r") as file_handler:
+        yield file_handler
 
-    yield file_handler
-
-    # __exit__方法
-    print("close file:", file_name, "in __exit__")
-    file_handler.close()
+        # __exit__方法
+        print("close file:", file_name, "in __exit__")
     return
 
 # 使用实例

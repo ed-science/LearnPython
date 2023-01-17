@@ -14,7 +14,7 @@ class People(object):
         return
 
     def __str__(self):
-        return self.name + ":" + str(self.age)
+        return f"{self.name}:{str(self.age)}"
 
     def __lt__(self, other):
         return self.name < other.name if self.name != other.name else self.age < other.age

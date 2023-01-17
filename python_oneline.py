@@ -5,6 +5,7 @@ python_oneline.py by xianhu
 """
 
 
+
 # 首先来个python之禅
 # python -c "import this"
 """
@@ -38,7 +39,8 @@ Namespaces are one honking great idea -- let's do more of those!
 
 
 # 一行代码实现变量值互换
-a, b = 1, 2; a, b = b, a
+a, b = 1, 2
+a, b = b, a
 
 
 # 一行代码解决FizzBuzz问题: 打印数字1到100, 3的倍数打印“Fizz”来替换这个数, 5的倍数打印“Buzz”, 既是3又是5的倍数的打印“FizzBuzz”
@@ -67,11 +69,26 @@ print([x[0] for x in [(a[i][0], a.append([a[i][1], a[i][0]+a[i][1]])) for a in (
 
 
 # 一行代码实现快排算法
-qsort = lambda arr: len(arr) > 1 and qsort(list(filter(lambda x: x <= arr[0], arr[1:]))) + arr[0:1] + qsort(list(filter(lambda x: x > arr[0], arr[1:]))) or arr
+qsort = (
+    lambda arr: len(arr) > 1
+    and qsort(list(filter(lambda x: x <= arr[0], arr[1:])))
+    + arr[:1]
+    + qsort(list(filter(lambda x: x > arr[0], arr[1:])))
+    or arr
+)
 
 
 # 一行代码解决八皇后问题
-[__import__('sys').stdout.write('\n'.join('.' * i + 'Q' + '.' * (8-i-1) for i in vec) + "\n========\n") for vec in __import__('itertools').permutations(range(8)) if 8 == len(set(vec[i]+i for i in range(8))) == len(set(vec[i]-i for i in range(8)))]
+[
+    __import__('sys').stdout.write(
+        '\n'.join('.' * i + 'Q' + '.' * (8 - i - 1) for i in vec)
+        + "\n========\n"
+    )
+    for vec in __import__('itertools').permutations(range(8))
+    if 8
+    == len({vec[i] + i for i in range(8)})
+    == len({vec[i] - i for i in range(8)})
+]
 
 
 # 一行代码实现数组的flatten功能: 将多维数组转化为一维

@@ -4,6 +4,7 @@
 python_spider.py by xianhu
 """
 
+
 import requests
 import urllib.error
 import urllib.parse
@@ -27,7 +28,7 @@ response = urllib.request.urlopen(request, timeout=10)
 # 发送数据，即在Request()中添加data参数
 data = urllib.parse.urlencode({"act": "login", "email": "xianhu@qq.com", "password": "123456"})
 request1 = urllib.request.Request(url, data=data)           # POST方法
-request2 = urllib.request.Request(url+"?%s" % data)         # GET方法
+request2 = urllib.request.Request(f"{url}?{data}")
 response = urllib.request.urlopen(request, timeout=10)
 
 

@@ -79,10 +79,16 @@ class Message(object):
         self.user_user_name = msg["User"].get("UserName", "")       # 消息发送者ID，如果为群消息，则为群ID
         self.user_nick_name = msg["User"].get("NickName", "")       # 消息发送者昵称，如果为群消息，则为群名
         self.user_remark_name = msg["User"].get("RemarkName", "")   # 消息发送者备注名称，如果为群消息，则为群备注名称
-        self.wind_name = self.user_remark_name if self.user_remark_name else (
-            self.user_nick_name if self.user_nick_name else (
-                my.friends[self.user_user_name]["NickName"] if self.user_user_name in my.friends else (
-                    my.groups[self.user_user_name]["NickName"] if self.user_user_name in my.groups else "未知窗口"
+        self.wind_name = (
+            self.user_remark_name
+            or self.user_nick_name
+            or (
+                my.friends[self.user_user_name]["NickName"]
+                if self.user_user_name in my.friends
+                else (
+                    my.groups[self.user_user_name]["NickName"]
+                    if self.user_user_name in my.groups
+                    else "未知窗口"
                 )
             )
         )
@@ -90,8 +96,8 @@ class Message(object):
         self.actual_user_name = msg.get("ActualUserName", "")       # 群消息中，消息发送者的ID
         self.actual_nick_name = msg.get("ActualNickName", "")       # 群消息中，消息发送者的群昵称
         self.actual_remark_name = self.actual_nick_name \
-            if (self.actual_user_name not in my.friends) or (not my.friends[self.actual_user_name]["RemarkName"]) \
-            else my.friends[self.actual_user_name]["RemarkName"]
+                if (self.actual_user_name not in my.friends) or (not my.friends[self.actual_user_name]["RemarkName"]) \
+                else my.friends[self.actual_user_name]["RemarkName"]
 
         self.is_at = msg.get("IsAt", None)              # 是否在群内被@
         self.we_type = msg["Type"]                      # 消息类型
@@ -107,18 +113,24 @@ def process_message_group(msg):
     """
     # ==== 处理红包消息 ====
     if msg.we_type == "Note" and msg.we_text.find("收到红包，请在手机上查看") >= 0:
-        my.send("【%s】中有人发红包啦，快抢！" % msg.wind_name, toUserName=my.to_user_name)
+        my.send(f"【{msg.wind_name}】中有人发红包啦，快抢！", toUserName=my.to_user_name)
 
     # ==== 处理关键词消息 ====
     for key in my.global_keys:
         if msg.we_type == "Text" and msg.we_text.find(key) >= 0:
-            my.send("【%s】中【%s】提及了关键字：%s" % (msg.wind_name, msg.actual_remark_name, key), toUserName=my.to_user_name)
+            my.send(
+                f"【{msg.wind_name}】中【{msg.actual_remark_name}】提及了关键字：{key}",
+                toUserName=my.to_user_name,
+            )
             my.send(msg.we_text, toUserName=my.to_user_name)
             break
 
     # ==== 群内是否被@ ====
     if msg.we_type == "Text" and msg.is_at:
-        my.send("【%s】中【%s】@了你" % (msg.wind_name, msg.actual_remark_name), toUserName=my.to_user_name)
+        my.send(
+            f"【{msg.wind_name}】中【{msg.actual_remark_name}】@了你",
+            toUserName=my.to_user_name,
+        )
         my.send(msg.we_text, toUserName=my.to_user_name)
     return
 
@@ -135,7 +147,7 @@ def process_message_revoke(msg):
     # 保存消息中的内容（图片、语音等）
     if msg.we_type in ["Picture", "Recording"]:
         try:
-            msg.we_text(".Cache/" + msg.msg_file)
+            msg.we_text(f".Cache/{msg.msg_file}")
             logging.warning("process_message_revoke: download %s to .Cache/", msg.msg_file)
         except Exception as excep:
             logging.error("process_message_revoke: download %s to .Cache/ error: %s", msg.msg_file, excep)
@@ -159,9 +171,9 @@ def process_message_revoke(msg):
         elif old_msg.we_type == "Sharing":
             my.send(old_msg.we_text + "\n" + old_msg.msg_url, toUserName=my.to_user_name)
         elif old_msg.we_type == "Picture":
-            my.send_image(".Cache/" + old_msg.msg_file, toUserName=my.to_user_name)
+            my.send_image(f".Cache/{old_msg.msg_file}", toUserName=my.to_user_name)
         elif old_msg.we_type == "Recording":
-            my.send_file(".Cache/" + old_msg.msg_file, toUserName=my.to_user_name)
+            my.send_file(f".Cache/{old_msg.msg_file}", toUserName=my.to_user_name)
     return
 
 

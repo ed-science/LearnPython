@@ -176,28 +176,27 @@ class CorpusSet(object):
                     # 更新id信息
                     self.local_bi.add_key_value(local_id, word)
                     art_wordid_list.append(local_id)
-                else:
-                    if self.global_bi.contains_value(word):
-                        # 更新id信息
-                        self.local_bi.add_key_value(local_id, word)
-                        art_wordid_list.append(local_id)
+                elif self.global_bi.contains_value(word):
+                    # 更新id信息
+                    self.local_bi.add_key_value(local_id, word)
+                    art_wordid_list.append(local_id)
 
-                        # 更新local_2_global
-                        self.local_2_global[local_id] = self.global_bi.get_key(word)
+                    # 更新local_2_global
+                    self.local_2_global[local_id] = self.global_bi.get_key(word)
 
             # 更新类变量: 必须article中word的数量大于0
-            if len(art_wordid_list) > 0:
+            if art_wordid_list:
                 self.words_count += len(art_wordid_list)
                 self.artids_list.append(art_id)
                 self.arts_Z.append(art_wordid_list)
 
         # 做相关初始计算--word相关
         self.V = len(self.local_bi)
-        logging.debug("words number: " + str(self.V) + ", " + str(self.words_count))
+        logging.debug(f"words number: {self.V}, {str(self.words_count)}")
 
         # 做相关初始计算--article相关
         self.M = len(self.artids_list)
-        logging.debug("articles number: " + str(self.M))
+        logging.debug(f"articles number: {self.M}")
         return
 
     def save_wordmap(self, file_name):
@@ -399,7 +398,9 @@ class LdaBase(CorpusSet):
 
                 # 计算列表最新VAR_NUM项的方差
                 pp_var = numpy.var(pp_list[-VAR_NUM:]) if len(pp_list) >= VAR_NUM else numpy.inf
-                info = (", preplexity: " + str(pp)) + ((", var: " + str(pp_var)) if len(pp_list) >= VAR_NUM else "")
+                info = f", preplexity: {str(pp)}" + (
+                    f", var: {str(pp_var)}" if len(pp_list) >= VAR_NUM else ""
+                )
 
             # 输出Debug信息
             logging.debug("\titeration " + str(self.current_iter) + info)
@@ -431,7 +432,7 @@ class LdaBase(CorpusSet):
                         if self.local_2_global and self.train_model:
                             w_g = self.local_2_global[w]
                             phi_p = (self.train_model.nw[:, w_g] + self.nw[:, w] + self.beta[w_g]) / \
-                                    (self.train_model.nwsum[:, 0] + self.nwsum[:, 0] + self.sum_beta)
+                                        (self.train_model.nwsum[:, 0] + self.nwsum[:, 0] + self.sum_beta)
                         else:
                             phi_p = (self.nw[:, w] + self.beta[w]) / (self.nwsum[:, 0] + self.sum_beta)
 
@@ -483,7 +484,7 @@ class LdaBase(CorpusSet):
         """
         with open(file_name, "w", encoding="utf-8") as f_zvalue:
             for m in range(self.M):
-                out_line = [str(w) + ":" + str(k) for w, k in zip(self.arts_Z[m], self.Z[m])]
+                out_line = [f"{str(w)}:{str(k)}" for w, k in zip(self.arts_Z[m], self.Z[m])]
                 f_zvalue.write(self.artids_list[m] + "\t" + " ".join(out_line) + "\n")
         return
 
@@ -550,13 +551,13 @@ class LdaBase(CorpusSet):
         name_predix = "%s-%05d" % (self.model_name, self.current_iter)
 
         # 保存训练结果
-        self.save_parameter(os.path.join(self.dir_path, "%s.%s" % (name_predix, "param")))
-        self.save_wordmap(os.path.join(self.dir_path, "%s.%s" % (name_predix, "wordmap")))
-        self.save_zvalue(os.path.join(self.dir_path, "%s.%s" % (name_predix, "zvalue")))
+        self.save_parameter(os.path.join(self.dir_path, f"{name_predix}.param"))
+        self.save_wordmap(os.path.join(self.dir_path, f"{name_predix}.wordmap"))
+        self.save_zvalue(os.path.join(self.dir_path, f"{name_predix}.zvalue"))
 
         #保存额外数据
-        self.save_twords(os.path.join(self.dir_path, "%s.%s" % (name_predix, "twords")))
-        self.save_tag(os.path.join(self.dir_path, "%s.%s" % (name_predix, "tag")))
+        self.save_twords(os.path.join(self.dir_path, f"{name_predix}.twords"))
+        self.save_tag(os.path.join(self.dir_path, f"{name_predix}.tag"))
         return
 
     def load_model(self):
@@ -566,9 +567,9 @@ class LdaBase(CorpusSet):
         name_predix = "%s-%05d" % (self.model_name, self.current_iter)
 
         # 加载训练结果
-        self.load_parameter(os.path.join(self.dir_path, "%s.%s" % (name_predix, "param")))
-        self.load_wordmap(os.path.join(self.dir_path, "%s.%s" % (name_predix, "wordmap")))
-        self.load_zvalue(os.path.join(self.dir_path, "%s.%s" % (name_predix, "zvalue")))
+        self.load_parameter(os.path.join(self.dir_path, f"{name_predix}.param"))
+        self.load_wordmap(os.path.join(self.dir_path, f"{name_predix}.wordmap"))
+        self.load_zvalue(os.path.join(self.dir_path, f"{name_predix}.zvalue"))
         return
 
 
@@ -601,11 +602,16 @@ class LdaModel(LdaBase):
             self.twords_num = twords_num
 
             # 初始化alpha和beta
-            self.alpha = numpy.array([alpha if alpha > 0 else (50.0/self.K) for k in range(self.K)])
-            self.beta = numpy.array([beta if beta > 0 else 0.01 for w in range(self.V)])
+            self.alpha = numpy.array(
+                [alpha if alpha > 0 else (50.0 / self.K) for _ in range(self.K)]
+            )
+            self.beta = numpy.array([beta if beta > 0 else 0.01 for _ in range(self.V)])
 
             # 初始化Z值,以便统计计数
-            self.Z = [[numpy.random.randint(self.K) for n in range(len(self.arts_Z[m]))] for m in range(self.M)]
+            self.Z = [
+                [numpy.random.randint(self.K) for _ in range(len(self.arts_Z[m]))]
+                for m in range(self.M)
+            ]
         else:
             logging.debug("init an existed model")
 
@@ -637,7 +643,7 @@ class LdaModel(LdaBase):
         :key: 训练模型,对语料集中的所有数据进行Gibbs抽样,并保存最后的抽样结果
         """
         # Gibbs抽样
-        logging.debug("sample iteration start, iters_num: " + str(self.iters_num))
+        logging.debug(f"sample iteration start, iters_num: {str(self.iters_num)}")
         self.gibbs_sampling(is_calculate_preplexity)
         logging.debug("sample iteration finish")
 
@@ -680,14 +686,17 @@ class LdaModel(LdaBase):
 
         # 重复抽样
         for i in range(repeat_num):
-            logging.debug("inference repeat_num: " + str(i+1))
+            logging.debug(f"inference repeat_num: {str(i + 1)}")
 
             # 初始化变量
             self.current_iter = 0
             self.iters_num = iters_num
 
             # 初始化Z值,以便统计计数
-            self.Z = [[numpy.random.randint(self.K) for n in range(len(self.arts_Z[m]))] for m in range(self.M)]
+            self.Z = [
+                [numpy.random.randint(self.K) for _ in range(len(self.arts_Z[m]))]
+                for m in range(self.M)
+            ]
 
             # 初始化统计计数
             self.init_statistics()

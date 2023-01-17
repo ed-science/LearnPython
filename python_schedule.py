@@ -12,7 +12,9 @@ from apscheduler.schedulers.background import BackgroundScheduler
 
 
 def print_hello():
-    print("TimeNow in func: %s" % (datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")))
+    print(
+        f'TimeNow in func: {datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")}'
+    )
     return
 
 

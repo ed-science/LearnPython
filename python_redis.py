@@ -17,7 +17,7 @@ channel_name = "fm-101.1"
 def public_test():
     while True:
         # 发布消息
-        conn_inst.publish(channel_name, "hello " + str(time.time()))
+        conn_inst.publish(channel_name, f"hello {str(time.time())}")
         if int(time.time()) % 10 == 1:
             conn_inst.publish(channel_name, "over")
         time.sleep(1)
@@ -30,7 +30,7 @@ def subscribe_test(_type=0):
     if _type == 0:
         # 订阅消息
         for item in pub.listen():
-            print("Listen on channel: %s" % item)
+            print(f"Listen on channel: {item}")
             if item["type"] == "message" and item["data"].decode() == "over":
                 print(item["channel"].decode(), "已停止发布")
                 break
@@ -38,7 +38,7 @@ def subscribe_test(_type=0):
         # 另一种订阅模式
         while True:
             item = pub.parse_response()
-            print("Listen on channel: %s" % item)
+            print(f"Listen on channel: {item}")
             if item[0].decode() == "message" and item[2].decode() == "over":
                 print(item[1].decode(), "已停止发布")
                 break

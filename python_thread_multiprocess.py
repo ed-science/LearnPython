@@ -15,31 +15,29 @@ g_search_list = list(range(10000))
 
 # 定义一个IO密集型任务：利用time.sleep()
 def task_io(task_id):
-    print("IOTask[%s] start" % task_id)
+    print(f"IOTask[{task_id}] start")
     while not g_queue.empty():
         time.sleep(1)
         try:
             data = g_queue.get(block=True, timeout=1)
-            print("IOTask[%s] get data: %s" % (task_id, data))
+            print(f"IOTask[{task_id}] get data: {data}")
         except Exception as excep:
-            print("IOTask[%s] error: %s" % (task_id, str(excep)))
-    print("IOTask[%s] end" % task_id)
+            print(f"IOTask[{task_id}] error: {str(excep)}")
+    print(f"IOTask[{task_id}] end")
     return
 
 
 # 定义一个计算密集型任务：利用一些复杂加减乘除、列表查找等
 def task_cpu(task_id):
-    print("CPUTask[%s] start" % task_id)
+    print(f"CPUTask[{task_id}] start")
     while not g_queue.empty():
-        count = 0
-        for i in range(10000):
-            count += pow(3*2, 3*2) if i in g_search_list else 0
+        count = sum(pow(3*2, 3*2) if i in g_search_list else 0 for i in range(10000))
         try:
             data = g_queue.get(block=True, timeout=1)
-            print("CPUTask[%s] get data: %s" % (task_id, data))
+            print(f"CPUTask[{task_id}] get data: {data}")
         except Exception as excep:
-            print("CPUTask[%s] error: %s" % (task_id, str(excep)))
-    print("CPUTask[%s] end" % task_id)
+            print(f"CPUTask[{task_id}] error: {str(excep)}")
+    print(f"CPUTask[{task_id}] end")
     return task_id
 
 

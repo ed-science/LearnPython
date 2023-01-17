@@ -18,12 +18,11 @@ def makePairs(arr):
 
 
 def generate(cfd, word='the', num=500):
-    for i in range(num):
+    for _ in range(num):
         # make an array with the words shown by proper count
         arr = []
         for j in cfd[word]:
-            for k in range(cfd[word][j]):
-                arr.append(j)
+            arr.extend(j for _ in range(cfd[word][j]))
         print(word, end=' ')
 
         # choose the word randomly from the conditional distribution

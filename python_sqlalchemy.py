@@ -4,6 +4,7 @@
 python_sqlalchemy.py by xianhu
 """
 
+
 import sqlalchemy
 import sqlalchemy.orm
 import sqlalchemy.ext.declarative
@@ -41,7 +42,6 @@ with engine.connect() as conn:
 BaseModel = sqlalchemy.ext.declarative.declarative_base()
 
 
-# 构建数据模型User
 class User(BaseModel):
     __tablename__ = "Users"         # 表名
     __table_args__ = {
@@ -64,7 +64,6 @@ class User(BaseModel):
     # role = sqlalchemy.orm.relationship("Role", foreign_keys="User.role_id", backref=sqlalchemy.orm.backref("users"))
 
 
-# 构建数据模型Role
 class Role(BaseModel):
     __tablename__ = "Roles"         # 表名
     __table_args__ = {
@@ -168,7 +167,7 @@ try:
     # 多表查询
     result = session.query(User, Role).filter(User.role_id == Role.id)
     for user, role in result:
-        print("user %s's role is %s" % (user.name, role.name))
+        print(f"user {user.name}'s role is {role.name}")
     users = session.query(User).join(Role, User.role_id == Role.id)
     for user in users:
         print("user join, name:", user.name)
@@ -176,12 +175,12 @@ try:
     # 关联属性的用法
     roles = session.query(Role)
     for role in roles:
-        print("role:%s users:" % role.name)
+        print(f"role:{role.name} users:")
         for user in role.users:
             print("\t%s" % user.name)
     users = session.query(User)
     for user in users:
-        print("user %s's role is %s" % (user.name, user.role.name))
+        print(f"user {user.name}'s role is {user.role.name}")
 
 except Exception as excep:
     session.rollback()

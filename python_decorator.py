@@ -11,24 +11,25 @@ import functools
 def logging(func):
     @functools.wraps(func)
     def decorator(*args, **kwargs):
-        print("%s called" % func.__name__)
+        print(f"{func.__name__} called")
         result = func(*args, **kwargs)
-        print("%s end" % func.__name__)
+        print(f"{func.__name__} end")
         return result
+
     return decorator
 
 
 # 使用装饰器
 @logging
 def test01(a, b):
-    print("in function test01, a=%s, b=%s" % (a, b))
+    print(f"in function test01, a={a}, b={b}")
     return 1
 
 
 # 使用装饰器
 @logging
 def test02(a, b, c=1):
-    print("in function test02, a=%s, b=%s, c=%s" % (a, b, c))
+    print(f"in function test02, a={a}, b={b}, c={c}")
     return 1
 
 
@@ -49,14 +50,14 @@ def params_chack(*types, **kwtypes):
 # 使用装饰器
 @params_chack(int, (list, tuple))
 def test03(a, b):
-    print("in function test03, a=%s, b=%s" % (a, b))
+    print(f"in function test03, a={a}, b={b}")
     return 1
 
 
 # 使用装饰器
 @params_chack(int, str, c=(int, str))
 def test04(a, b, c):
-    print("in function test04, a=%s, b=%s, c=%s" % (a, b, c))
+    print(f"in function test04, a={a}, b={b}, c={c}")
     return 1
 
 
@@ -64,7 +65,7 @@ def test04(a, b, c):
 class ATest(object):
     @params_chack(object, int, str)
     def test(self, a, b):
-        print("in function test of ATest, a=%s, b=%s" % (a, b))
+        print(f"in function test of ATest, a={a}, b={b}")
         return 1
 
 
@@ -72,7 +73,7 @@ class ATest(object):
 @logging
 @params_chack(int, str, (list, tuple))
 def test05(a, b, c):
-    print("in function test05, a=%s, b=%s, c=%s" % (a, b, c))
+    print(f"in function test05, a={a}, b={b}, c={c}")
     return 1
 
 
@@ -84,16 +85,16 @@ class Decorator(object):
         return
 
     def __call__(self, *args, **kwargs):
-        print("%s called" % self.func.__name__)
+        print(f"{self.func.__name__} called")
         result = self.func(*args, **kwargs)
-        print("%s end" % self.func.__name__)
+        print(f"{self.func.__name__} end")
         return result
 
 
 # 使用装饰器
 @Decorator
 def test06(a, b, c):
-    print("in function test06, a=%s, b=%s, c=%s" % (a, b, c))
+    print(f"in function test06, a={a}, b={b}, c={c}")
     return 1
 
 
@@ -119,7 +120,7 @@ class ParamCheck(object):
 # 使用装饰器
 @ParamCheck(int, str, (list, tuple))
 def test07(a, b, c):
-    print("in function test06, a=%s, b=%s, c=%s" % (a, b, c))
+    print(f"in function test06, a={a}, b={b}, c={c}")
     return 1
 
 

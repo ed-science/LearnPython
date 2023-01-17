@@ -34,7 +34,7 @@ def test_1(url):
 
 # render.png
 def test_2(url):
-    render = "http://xx.xx.xx.xx:8050/render.png?url=%s&timeout=5" % url
+    render = f"http://xx.xx.xx.xx:8050/render.png?url={url}&timeout=5"
     response = requests.get(url=render)
     print(url, response.status_code)
     return
